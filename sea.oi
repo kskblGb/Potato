@@ -288,7 +288,6 @@ local zombieESP = {}
 local function isZombieModel(m)
     if not m:IsA("Model") then return false end
     if m == LP.Character then return false end
-    -- 是玩家角色?
     for _, plr in ipairs(Players:GetPlayers()) do
         if plr.Character == m then return false end
     end
@@ -1193,10 +1192,17 @@ divider.BorderSizePixel = 0
 divider.ZIndex = 7
 divider.Parent = window
 
-local content = Instance.new("Frame")
+-- 内容区 (可上下滚动)
+local content = Instance.new("ScrollingFrame")
 content.Size = UDim2.new(1, -130, 1, -60)
 content.Position = UDim2.new(0, 120, 0, 52)
 content.BackgroundTransparency = 1
+content.BorderSizePixel = 0
+content.ScrollBarThickness = 4
+content.ScrollBarImageColor3 = THEME.ACCENT
+content.CanvasSize = UDim2.new(0, 0, 0, 0)
+content.AutomaticCanvasSize = Enum.AutomaticSize.Y
+content.ScrollingDirection = Enum.ScrollingDirection.Y
 content.ZIndex = 5
 content.Parent = window
 
@@ -1205,13 +1211,17 @@ cLayout.Padding = UDim.new(0, 6)
 cLayout.SortOrder = Enum.SortOrder.LayoutOrder
 cLayout.Parent = content
 
+local cPadding = Instance.new("UIPadding")
+cPadding.PaddingBottom = UDim.new(0, 8)
+cPadding.Parent = content
+
 local function clearContent()
     if homeConn then
         homeConn:Disconnect()
         homeConn = nil
     end
     for _, c in ipairs(content:GetChildren()) do
-        if not c:IsA("UIListLayout") then
+        if not c:IsA("UIListLayout") and not c:IsA("UIPadding") then
             c:Destroy()
         end
     end
@@ -1516,7 +1526,6 @@ local iwcc = Instance.new("UICorner")
 iwcc.CornerRadius = UDim.new(0, 5)
 iwcc.Parent = iwClose
 
--- 高度标签
 local iwHLbl = Instance.new("TextLabel")
 iwHLbl.Size = UDim2.new(1, -24, 0, 14)
 iwHLbl.Position = UDim2.new(0, 12, 0, 32)
@@ -1529,7 +1538,6 @@ iwHLbl.Text = "高度: " .. invisState.height
 iwHLbl.ZIndex = 21
 iwHLbl.Parent = invisWin
 
--- 高度滑块
 local iwHBar = Instance.new("Frame")
 iwHBar.Size = UDim2.new(1, -24, 0, 6)
 iwHBar.Position = UDim2.new(0, 12, 0, 48)
@@ -1598,7 +1606,6 @@ UIS.InputEnded:Connect(function(i)
     end
 end)
 
--- 启用按钮
 invisSwitchBtn = Instance.new("TextButton")
 invisSwitchBtn.Size = UDim2.new(1, -24, 0, 26)
 invisSwitchBtn.Position = UDim2.new(0, 12, 0, 82)
@@ -1623,7 +1630,6 @@ invisSwitchBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- 拖动隐身小窗
 local iwDrag = false
 local iwSP = nil
 local iwSV = nil
@@ -1663,7 +1669,6 @@ local pages = {}
 
 -- 主页
 pages["主页"] = function()
-    -- 头像 40%
     local avatarFrame = Instance.new("Frame")
     avatarFrame.Size = UDim2.new(1, 0, 0.4, 0)
     avatarFrame.BackgroundTransparency = 1
@@ -1697,7 +1702,6 @@ pages["主页"] = function()
         end
     end)
 
-    -- 名字 + SVIP
     local nameRow = Instance.new("Frame")
     nameRow.Size = UDim2.new(1, 0, 0, 28)
     nameRow.BackgroundTransparency = 1
@@ -1736,7 +1740,6 @@ pages["主页"] = function()
     vipLabel.LayoutOrder = 2
     vipLabel.Parent = nameRow
 
-    -- 计时
     local timeLabel = Instance.new("TextLabel")
     timeLabel.Size = UDim2.new(1, 0, 0, 18)
     timeLabel.BackgroundTransparency = 1
@@ -1748,7 +1751,6 @@ pages["主页"] = function()
     timeLabel.ZIndex = 6
     timeLabel.Parent = content
 
-    -- 黄色提示
     local tipLabel = Instance.new("TextLabel")
     tipLabel.Size = UDim2.new(1, 0, 0, 16)
     tipLabel.BackgroundTransparency = 1
@@ -1760,7 +1762,6 @@ pages["主页"] = function()
     tipLabel.ZIndex = 6
     tipLabel.Parent = content
 
-    -- 作者
     local authorLabel = Instance.new("TextLabel")
     authorLabel.Size = UDim2.new(1, 0, 0, 44)
     authorLabel.BackgroundTransparency = 1
@@ -1908,7 +1909,6 @@ pages["玩家"] = function()
         updateTeleport()
     end)
 
-    -- 玩家透视 (用原 Config.ESP)
     createToggle(content, "玩家透视", Config.ESP, function(v)
         Config.ESP = v
     end)
@@ -1917,13 +1917,11 @@ pages["玩家"] = function()
         Config.Team = v
     end)
 
-    -- 方框 (联动)
     local boxBtn = createToggle(content, "方框", Config.Box, function(v)
         setBoxState(v)
     end)
     addBoxButton(boxBtn)
 
-    -- 距离 (联动)
     local distBtn = createToggle(content, "距离", Config.Dist, function(v)
         setDistState(v)
     end)
@@ -2177,8 +2175,6 @@ UIS.InputEnded:Connect(function(input)
     or input.UserInputType == Enum.UserInputType.Touch) and miniDrag then
         miniDrag = false
         if not miniMoved and (tick() - miniStartTime) < 1 then
-            local cam = workspace.CurrentCamera
-            local vp = cam and cam.ViewportSize or Vector2.new(1280, 720)
             local ww = window.Size.X.Offset
             local wh = window.Size.Y.Offset
             window.Position = UDim2.new(0.5, -ww/2, 0.5, -wh/2)
