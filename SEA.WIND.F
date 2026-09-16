@@ -1,7 +1,7 @@
 --=============================================================
 --  土豆脚本 v10.0 · 最终版
 --  隐身v9.3整合 / 娱乐分区 / 无限跳 / 僵尸透视优化
---  攻击速度 / 甩飞 / 黄牙修复 / 窗口层级修复
+--  攻击速度 / 甩飞 / 黄牙修复 / 窗口层级修复 / 最小化修复
 --=============================================================
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -1675,7 +1675,7 @@ minBtn.TextColor3 = THEME.TEXT
 minBtn.TextSize = 18
 minBtn.Font = Enum.Font.GothamBold
 minBtn.BorderSizePixel = 0
-minBtn.ZIndex = 200
+minBtn.ZIndex = 9999
 minBtn.Parent = dragArea
 
 local mbc = Instance.new("UICorner")
@@ -1791,7 +1791,7 @@ flyMinBtn.TextColor3 = THEME.TEXT
 flyMinBtn.TextSize = 14
 flyMinBtn.Font = Enum.Font.GothamBold
 flyMinBtn.BorderSizePixel = 0
-flyMinBtn.ZIndex = 200
+flyMinBtn.ZIndex = 9999
 flyMinBtn.Parent = flyDragArea
 Instance.new("UICorner", flyMinBtn).CornerRadius = UDim.new(0, 5)
 
@@ -2014,7 +2014,7 @@ invisMinBtn.TextColor3 = THEME.TEXT
 invisMinBtn.TextSize = 14
 invisMinBtn.Font = Enum.Font.GothamBold
 invisMinBtn.BorderSizePixel = 0
-invisMinBtn.ZIndex = 200
+invisMinBtn.ZIndex = 9999
 invisMinBtn.Parent = invisDragArea
 Instance.new("UICorner", invisMinBtn).CornerRadius = UDim.new(0, 6)
 
@@ -2288,6 +2288,8 @@ end)
 invisBtnSettings.MouseButton1Click:Connect(function()
     invisStatusOuter.Visible = false
     invisMainOuter.Visible = true
+    invisEnableBtn.Text = "关闭"
+    invisEnableBtn.BackgroundColor3 = THEME.GREEN
 end)
 
 invisBtnMin.MouseButton1Click:Connect(function()
@@ -2302,6 +2304,7 @@ invisBtnClose.MouseButton1Click:Connect(function()
     invisEnableBtn.BackgroundColor3 = THEME.OFF
     invisStatusOuter.Visible = false
     invisMainOuter.Visible = true
+    invisMiniOuterX.Visible = false
 end)
 
 --========== 自瞄圆框 ==========
